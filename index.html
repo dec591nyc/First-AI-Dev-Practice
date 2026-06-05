@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yichi's Dynamic Glassmorphic Time Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Theme 1: Olive Green (Default) */
+            --bg-base: #11120f;
+            --primary: #81944e;
+            --primary-light: #a2b865;
+            --primary-glow: rgba(129, 148, 78, 0.3);
+            --primary-tint: rgba(129, 148, 78, 0.12);
+            --primary-border: rgba(129, 148, 78, 0.35);
+
+            --text-main: #eae8e3;
+            --text-muted: #a6a5a0;
+            --glass-bg: rgba(23, 25, 20, 0.6);
+            --glass-border: rgba(234, 232, 227, 0.08);
+            --glass-shine: rgba(255, 255, 255, 0.04);
+            --spotlight-color: rgba(162, 184, 101, 0.12);
+        }
+
+        /* Olive Glass Theme Override */
+        [data-theme="olive"] {
+            --bg-base: #11120f;
+            --primary: #81944e;
+            --primary-light: #a2b865;
+            --primary-glow: rgba(129, 148, 78, 0.3);
+            --primary-tint: rgba(129, 148, 78, 0.12);
+            --primary-border: rgba(129, 148, 78, 0.35);
+            --glass-bg: rgba(23, 25, 20, 0.65);
+            --spotlight-color: rgba(162, 184, 101, 0.12);
+        }
+
+        /* Warm Orange Glass Theme Override */
+        [data-theme="orange"] {
+            --bg-base: #14110f;
+            --primary: #e56c32;
+            --primary-light: #ff8e59;
+            --primary-glow: rgba(229, 108, 50, 0.3);
+            --primary-tint: rgba(229, 108, 50, 0.12);
+            --primary-border: rgba(229, 108, 50, 0.35);
+            --glass-bg: rgba(26, 21, 18, 0.65);
+            --spotlight-color: rgba(255, 142, 89, 0.12);
+        }
+
+        /* Slate Cyber Glass Theme Override */
+        [data-theme="slate"] {
+            --bg-base: #0f1115;
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --primary-glow: rgba(99, 102, 241, 0.3);
+            --primary-tint: rgba(99, 102, 241, 0.12);
+            --primary-border: rgba(99, 102, 241, 0.35);
+            --glass-bg: rgba(18, 20, 26, 0.65);
+            --spotlight-color: rgba(129, 140, 248, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            transition: background-color 0.5s ease;
+        }
+
+        /* Ambient Blobs in Background */
+        .ambient-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.22;
+            animation: float 28s infinite alternate ease-in-out;
+            transition: background 0.5s ease;
+        }
+
+        .blob-1 {
+            width: 500px;
+            height: 500px;
+            background: var(--primary);
+            top: -10%;
+            left: -5%;
+            animation-duration: 32s;
+        }
+
+        .blob-2 {
+            width: 600px;
+            height: 600px;
+            background: var(--primary-light);
+            bottom: -15%;
+            right: -5%;
+            animation-duration: 38s;
+            animation-delay: -6s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(60px, -50px) scale(1.08) rotate(180deg); }
+            100% { transform: translate(-30px, 40px) scale(0.92) rotate(360deg); }
+        }
+
+        /* Glass Card Container */
+        .card-container {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 540px;
+            padding: 2.8rem 2.2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.5),
+                inset 0 1px 1px var(--glass-shine);
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+            overflow: hidden;
+        }
+
+        /* Mouse tracking refraction spotlight effect */
+        .card-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle 240px at var(--mouse-x, 0) var(--mouse-y, 0), var(--spotlight-color), transparent 80%);
+            z-index: 1;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+        }
+
+        /* Header controls */
+        .controls-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 1rem;
+        }
+
+        .badge-tag {
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            color: var(--primary-light);
+            text-transform: uppercase;
+            background: var(--primary-tint);
+            border: 1px solid var(--primary-border);
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .control-btn:hover {
+            border-color: var(--primary);
+            background: var(--primary-tint);
+            transform: translateY(-1px);
+        }
+
+        .control-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        /* Greeting & Quote */
+        .greeting-section {
+            text-align: left;
+        }
+
+        .greeting-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 0.3rem;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+        }
+
+        .greeting-subtitle {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Digital Clock */
+        .clock-display {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 6px;
+            margin: 0.5rem 0;
+        }
+
+        .clock-digits {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 4rem;
+            font-weight: 400;
+            letter-spacing: -0.03em;
+            color: var(--text-main);
+            text-shadow: 0 0 20px rgba(234, 232, 227, 0.15);
+            line-height: 1;
+        }
+
+        .clock-colon {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 3.6rem;
+            color: var(--primary-light);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+
+        .clock-ampm {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--primary-light);
+            letter-spacing: 0.05em;
+            margin-left: 4px;
+        }
+
+        /* Calendar Info */
+        .date-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            padding: 10px;
+            border-radius: 14px;
+        }
+
+        .date-day {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--primary-light);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .date-divider {
+            width: 1px;
+            height: 14px;
+            background: var(--glass-border);
+        }
+
+        .date-full {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        /* Timezone Indicator */
+        .timezone-lbl {
+            font-size: 0.72rem;
+            font-family: monospace;
+            color: var(--text-muted);
+            letter-spacing: 0.04em;
+        }
+
+        /* Day Progress widget */
+        .progress-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            text-align: left;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.76rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.02em;
+        }
+
+        .progress-track {
+            position: relative;
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+            box-shadow: 0 0 10px var(--primary-glow);
+            border-radius: 6px;
+            transition: width 0.5s cubic-bezier(0.1, 0.8, 0.25, 1);
+        }
+
+        /* Theme selectors & Quotes */
+        .quote-panel {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            text-align: left;
+        }
+
+        .quote-text {
+            font-size: 0.82rem;
+            line-height: 1.5;
+            color: var(--text-main);
+            font-style: italic;
+        }
+
+        .quote-author {
+            font-size: 0.74rem;
+            color: var(--primary-light);
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .quote-action-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        .theme-selector-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .theme-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .theme-dot:hover {
+            transform: scale(1.2);
+        }
+
+        .theme-dot.active {
+            border-color: var(--text-main);
+            transform: scale(1.1);
+        }
+
+        .theme-dot-olive { background-color: #81944e; }
+        .theme-dot-orange { background-color: #e56c32; }
+        .theme-dot-slate { background-color: #6366f1; }
+
+        /* Footer copyright */
+        .footer-tag {
+            font-size: 0.70rem;
+            color: var(--text-muted);
+            letter-spacing: 0.02em;
+            margin-top: 0.5rem;
+        }
+
+        .footer-tag a {
+            color: var(--primary-light);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .footer-tag a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Blobs in Background -->
+    <div class="ambient-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <!-- Glass Card Container -->
+    <div class="card-container" id="glass-card">
+        <div class="card-content">
+            <!-- Header Controls -->
+            <div class="controls-header">
+                <span class="badge-tag" id="badge-lbl">Assignment 1</span>
+                <div class="button-group">
+                    <button class="control-btn" id="lang-btn">EN</button>
+                    <button class="control-btn" id="format-btn">12H</button>
+                </div>
+            </div>
+
+            <!-- Greeting -->
+            <div class="greeting-section">
+                <h2 class="greeting-title" id="greeting-text">Welcome, Guest</h2>
+                <p class="greeting-subtitle" id="greeting-desc">Let's build something beautiful today.</p>
+            </div>
+
+            <!-- Digital Clock -->
+            <div>
+                <div class="clock-display">
+                    <span class="clock-digits" id="time-hours">00</span>
+                    <span class="clock-colon">:</span>
+                    <span class="clock-digits" id="time-minutes">00</span>
+                    <span class="clock-colon">:</span>
+                    <span class="clock-digits" id="time-seconds">00</span>
+                    <span class="clock-ampm" id="time-ampm">AM</span>
+                </div>
+                <div class="timezone-lbl" id="timezone-text">UTC Offset: +00:00 (GMT)</div>
+            </div>
+
+            <!-- Calendar Display -->
+            <div class="date-container">
+                <span class="date-day" id="date-day-name">Friday</span>
+                <span class="date-divider"></span>
+                <span class="date-full" id="date-full-text">June 5, 2026</span>
+            </div>
+
+            <!-- Day Progress Indicator -->
+            <div class="progress-section">
+                <div class="progress-header">
+                    <span id="progress-lbl">Day Progress</span>
+                    <span id="progress-pct">0.00%</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-bar" id="progress-bar-fill"></div>
+                </div>
+            </div>
+
+            <!-- Developer Quotes & Themes -->
+            <div class="quote-panel">
+                <div class="quote-text" id="quote-content">"Programs must be written for people to read, and only secondarily for machines to execute."</div>
+                <div class="quote-author" id="quote-author">- Harold Abelson</div>
+                <div class="quote-action-row">
+                    <!-- Theme switches -->
+                    <div class="theme-selector-container">
+                        <span style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700; margin-right: 4px;" id="theme-lbl">THEME:</span>
+                        <div class="theme-dot theme-dot-olive active" data-theme-name="olive"></div>
+                        <div class="theme-dot theme-dot-orange" data-theme-name="orange"></div>
+                        <div class="theme-dot theme-dot-slate" data-theme-name="slate"></div>
+                    </div>
+                    <!-- Refresh quote btn -->
+                    <button class="control-btn" id="quote-btn" style="padding: 4px 10px; border-radius: 8px;">🔄</button>
+                </div>
+            </div>
+
+            <!-- Card Footer -->
+            <div class="footer-tag">
+                <span id="footer-copy">© 2026 Yichi Nien. Built for </span>
+                <a href="https://17s-portfolio.vercel.app/" target="_blank" id="footer-portfolio-link">Portfolio</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const card = document.getElementById('glass-card');
+        const langBtn = document.getElementById('lang-btn');
+        const formatBtn = document.getElementById('format-btn');
+        
+        const textHours = document.getElementById('time-hours');
+        const textMinutes = document.getElementById('time-minutes');
+        const textSeconds = document.getElementById('time-seconds');
+        const textAmpm = document.getElementById('time-ampm');
+        
+        const textDay = document.getElementById('date-day-name');
+        const textDateFull = document.getElementById('date-full-text');
+        const textTimezone = document.getElementById('timezone-text');
+        
+        const badgeLabel = document.getElementById('badge-lbl');
+        const greetingText = document.getElementById('greeting-text');
+        const greetingDesc = document.getElementById('greeting-desc');
+        const progressLabel = document.getElementById('progress-lbl');
+        const progressPct = document.getElementById('progress-pct');
+        const progressBarFill = document.getElementById('progress-bar-fill');
+        
+        const quoteText = document.getElementById('quote-content');
+        const quoteAuthor = document.getElementById('quote-author');
+        const quoteBtn = document.getElementById('quote-btn');
+        const themeLabel = document.getElementById('theme-lbl');
+        const footerCopy = document.getElementById('footer-copy');
+        const footerPortfolioLink = document.getElementById('footer-portfolio-link');
+
+        // State Variables
+        let currentLanguage = 'zh'; // Default to Chinese
+        let is24HourFormat = false;
+
+        // Multilingual Dictionary
+        const i18n = {
+            en: {
+                badge: "Assignment 1",
+                format12: "12H",
+                format24: "24H",
+                langToggle: "繁中",
+                timezone: "Timezone: ",
+                progress: "Day Progress",
+                theme: "THEME:",
+                footer: "© 2026 Yichi Nien. Built for ",
+                portfolio: "Portfolio",
+                greetings: {
+                    morning: "Good Morning, Yichi",
+                    afternoon: "Good Afternoon, Yichi",
+                    evening: "Good Evening, Yichi",
+                    night: "Good Night, Yichi"
+                },
+                subtitles: {
+                    morning: "Start the day with clear logic and precise data.",
+                    afternoon: "Optimize your databases and refine pipelines.",
+                    evening: "Review monitoring stats and wrap up tasks.",
+                    night: "System cooling down. Rest well for tomorrow."
+                },
+                days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+            },
+            zh: {
+                badge: "職前訓第一份作業",
+                format12: "12小時制",
+                format24: "24小時制",
+                langToggle: "EN",
+                timezone: "目前時區: ",
+                progress: "今日時間流逝度",
+                theme: "面板主題:",
+                footer: "© 2026 逸棋 (Yichi). 為個人 ",
+                portfolio: "作品集開發",
+                greetings: {
+                    morning: "早安，逸棋 (Yichi)",
+                    afternoon: "午安，逸棋 (Yichi)",
+                    evening: "晚安，逸棋 (Yichi)",
+                    night: "深夜了，逸棋 (Yichi)"
+                },
+                subtitles: {
+                    morning: "用清晰的邏輯思維搭配精準的數據迎接全新的一天。",
+                    afternoon: "持續優化資料管道，維持系統高效運轉。",
+                    evening: "檢視今日的監測數據，整理開發任務。",
+                    night: "系統進入休眠狀態。睡個好覺，明日再戰。"
+                },
+                days: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"],
+                months: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]
+            }
+        };
+
+        // Developer Quotes List (Localized)
+        const quotes = {
+            en: [
+                { text: "Programs must be written for people to read, and only secondarily for machines to execute.", author: "Harold Abelson" },
+                { text: "Simple things should be simple, complex things should be possible.", author: "Alan Kay" },
+                { text: "Data is a precious thing and will last longer than the systems themselves.", author: "Tim Berners-Lee" },
+                { text: "Without big data, you are blind and deaf and in the middle of a freeway.", author: "Geoffrey Moore" },
+                { text: "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.", author: "Martin Fowler" }
+            ],
+            zh: [
+                { text: "程式碼首先是寫給人看的，其次才是讓機器執行。", author: "Harold Abelson" },
+                { text: "簡單的事情應該要很簡單，複雜的事情應該要是可行的。", author: "Alan Kay" },
+                { text: "數據是非常寶貴的，它的生命週期遠比系統本身更長久。", author: "Tim Berners-Lee" },
+                { text: "沒有大數據，你就像一隻盲目摸索的聾啞人，置身於高速公路中央。", author: "Geoffrey Moore" },
+                { text: "任何傻瓜都能寫出電腦能理解的程式碼。優秀的程式設計師寫的是人類能理解的代碼。", author: "Martin Fowler" }
+            ]
+        };
+
+        // Mouse Refraction Movement Listener
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+        });
+
+        // Theme Switcher Logic
+        const dots = document.querySelectorAll('.theme-dot');
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                dots.forEach(d => d.classList.remove('active'));
+                dot.classList.add('active');
+                
+                const chosenTheme = dot.getAttribute('data-theme-name');
+                document.documentElement.setAttribute('data-theme', chosenTheme);
+            });
+        });
+
+        // Quotes Generator
+        let currentQuoteIndex = 0;
+        function updateQuote() {
+            const list = quotes[currentLanguage];
+            const q = list[currentQuoteIndex];
+            quoteText.textContent = `"${q.text}"`;
+            quoteAuthor.textContent = `- ${q.author}`;
+        }
+
+        quoteBtn.addEventListener('click', () => {
+            const list = quotes[currentLanguage];
+            currentQuoteIndex = (currentQuoteIndex + 1) % list.length;
+            updateQuote();
+        });
+
+        // Toggle Language
+        langBtn.addEventListener('click', () => {
+            currentLanguage = currentLanguage === 'en' ? 'zh' : 'en';
+            langBtn.textContent = i18n[currentLanguage].langToggle;
+            updateUIStrings();
+            updateClock();
+            updateQuote();
+        });
+
+        // Toggle 12H/24H Format
+        formatBtn.addEventListener('click', () => {
+            is24HourFormat = !is24HourFormat;
+            formatBtn.textContent = is24HourFormat ? i18n[currentLanguage].format24 : i18n[currentLanguage].format12;
+            updateClock();
+        });
+
+        // Update UI Text Content
+        function updateUIStrings() {
+            const dict = i18n[currentLanguage];
+            badgeLabel.textContent = dict.badge;
+            formatBtn.textContent = is24HourFormat ? dict.format24 : dict.format12;
+            progressLabel.textContent = dict.progress;
+            themeLabel.textContent = dict.theme;
+            footerCopy.innerHTML = dict.footer;
+            footerPortfolioLink.textContent = dict.portfolio;
+        }
+
+        // Live Clock, Calendar & Day Progress Logic
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            const dayOfWeek = now.getDay();
+            const date = now.getDate();
+            const month = now.getMonth();
+            const year = now.getFullYear();
+
+            // 1. Clock Display
+            if (is24HourFormat) {
+                textHours.textContent = String(hours).padStart(2, '0');
+                textAmpm.style.display = 'none';
+            } else {
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12; // 0 should be 12
+                textHours.textContent = String(hours).padStart(2, '0');
+                textAmpm.textContent = ampm;
+                textAmpm.style.display = 'inline';
+            }
+            textMinutes.textContent = String(minutes).padStart(2, '0');
+            textSeconds.textContent = String(seconds).padStart(2, '0');
+
+            // 2. Calendar Display
+            const dict = i18n[currentLanguage];
+            textDay.textContent = dict.days[dayOfWeek];
+            if (currentLanguage === 'en') {
+                textDateFull.textContent = `${dict.months[month]} ${date}, ${year}`;
+            } else {
+                textDateFull.textContent = `${year}年${dict.months[month]}${date}日`;
+            }
+
+            // 3. Timezone display
+            const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const offsetMinutes = -now.getTimezoneOffset();
+            const offsetHrs = Math.floor(Math.abs(offsetMinutes) / 60);
+            const offsetMins = Math.abs(offsetMinutes) % 60;
+            const sign = offsetMinutes >= 0 ? '+' : '-';
+            const offsetStr = `UTC ${sign}${String(offsetHrs).padStart(2, '0')}:${String(offsetMins).padStart(2, '0')}`;
+            textTimezone.textContent = `${dict.timezone}${tzName} (${offsetStr})`;
+
+            // 4. Greetings Logic
+            const hr = now.getHours();
+            let greetingKey = 'morning';
+            if (hr >= 5 && hr < 12) {
+                greetingKey = 'morning';
+            } else if (hr >= 12 && hr < 17) {
+                greetingKey = 'afternoon';
+            } else if (hr >= 17 && hr < 22) {
+                greetingKey = 'evening';
+            } else {
+                greetingKey = 'night';
+            }
+            
+            // Emoji mappings
+            const emojis = { morning: '🌅', afternoon: '☀️', evening: '🌆', night: '🌌' };
+            greetingText.textContent = `${emojis[greetingKey]} ${dict.greetings[greetingKey]}`;
+            greetingDesc.textContent = dict.subtitles[greetingKey];
+
+            // 5. Day Progress Bar Calculation
+            const totalSecondsInDay = 24 * 3600;
+            const elapsedSeconds = (now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds() + (now.getMilliseconds() / 1000);
+            const progressPercentage = (elapsedSeconds / totalSecondsInDay) * 100;
+            progressPct.textContent = `${progressPercentage.toFixed(3)}%`;
+            progressBarFill.style.width = `${progressPercentage}%`;
+        }
+
+        // Initialize App
+        updateUIStrings();
+        updateQuote();
+        setInterval(updateClock, 100); // 100ms interval for fluid sub-second updates
+        updateClock();
+    </script>
+</body>
+</html>
