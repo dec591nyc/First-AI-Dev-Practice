@@ -2,7 +2,7 @@
 
 一個基於純前端技術 (HTML/CSS/JS) 建構的單頁面數位時鐘與時間資訊儀表板。本專案為職前培訓的第一份練習作業，主要用於熟悉前端排版與動態邏輯互動。
 
-🔗 **線上展示連結 (Live Demo)**: [https://dec591nyc.github.io/First-AI-Dev-Practice/](https://dec591nyc.github.io/First-AI-Dev-Practice/)
+🔗 [**線上展示連結 (Live Demo)**](https://dec591nyc.github.io/First-AI-Dev-Practice/)
 
 ---
 
