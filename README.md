@@ -4,7 +4,7 @@
 
 一個基於純前端技術 (HTML/CSS/JS) 建構的單頁面數位時鐘與時間資訊儀表板。
 
-🔗 [**線上展示連結 (Live Demo)**](https://dec591nyc.github.io/First-AI-Dev-Practice/)
+🔗 [**Live Demo**](https://dec591nyc.github.io/First-AI-Dev-Practice/)
 
 ---
 
