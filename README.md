@@ -1,38 +1,37 @@
-# First-AI-Dev-Practice: 互動式磨砂玻璃時間儀表板 (Dynamic Glassmorphic Time Dashboard)
+# First-AI-Dev-Practice: 多功能網頁時鐘與時間儀表板
 
-一個精美、高品質且具備高度互動性的單頁面數位時鐘與時間儀表板。本專案為職前培訓課程的第一份作業，旨在展現前端開發的高階視覺呈現能力，運用現代排版、動態 CSS 變數、毛玻璃（Glassmorphism）卡片樣式以及細緻的微交互動畫。
+一個基於純前端技術 (HTML/CSS/JS) 建構的單頁面數位時鐘與時間資訊儀表板。本專案為職前培訓的第一份練習作業，主要用於熟悉前端排版與動態邏輯互動。
 
-🔗 **線上展示連結 (Live Demo)**: [https://dec591nyc.github.io/First-AI-Dev-Practice/](https://dec591nyc.github.io/First-AI-Dev-Practice/)  
-🔗 **開發作品集連結**: [https://17s-portfolio.vercel.app/](https://17s-portfolio.vercel.app/)
-
----
-
-## ✨ 核心特色
-
-- **🎨 動態面板主題切換**: 支援四種獨特視覺風格的互動式背景主題：
-  - 🍃 **Olive Glass (橄欖綠玻璃)**: 舒適沉穩的自然大地色系搭配橄欖綠點綴。
-  - 🍊 **Warm Orange Glass (暖陽橘玻璃)**: 充滿活力的日落炭黑與溫暖橘。
-  - 🌌 **Slate Cyber Glass (極客藍玻璃)**: 科技感十足的深紫與皇家藍色調。
-  - 🥛 **Beige Sand Glass (燕麥米色玻璃)**: [新增] 溫暖典雅的淺色奶茶燕麥色，搭配奶油與沙岩色調，帶來質感絕佳的淺色視覺體驗。
-- **🖱️ 滑鼠折射光效追蹤 (Spotlight Refraction)**: 卡片背景會即時追蹤滑鼠的座標，產生精緻的動態光暈折射效果。
-- **⏳ 今日時間流逝進度條**: 以毫秒級的高精度即時計算並渲染當天已過去的時間百分比。
-- **🌐 雙語介面切換**: 原生支援英文 (EN) 與繁體中文 (繁中) 之間的字串及日曆語系切換。
-- **⏰ 12H / 24H 制切換**: 快速切換時間顯示格式，並保留流暢的秒數顯示。
-- **🌍 系統時區自動偵測**: 自動讀取本地系統的時區偏移量 (UTC Offset) 與地理時區名稱。
-- **💬 靈感金句引擎**: 內置精選的程式設計師與數據工程師名言金句，點擊即可隨機刷新。
+🔗 **線上展示連結 (Live Demo)**: [https://dec591nyc.github.io/First-AI-Dev-Practice/](https://dec591nyc.github.io/First-AI-Dev-Practice/)
 
 ---
 
-## 🚀 如何在本地運行
+## ✨ 核心功能
 
-本專案為純前端單頁面應用程式 (Single Page Application)，完全採用原生網頁技術建構，無需進行任何打包或建置設定即可執行：
+- **🎨 多主題面板切換**: 支援四種不同風格的背景與卡片主題：
+  - 🍃 **Olive Glass (橄欖綠)**: 沉穩的大地綠色調。
+  - 🍊 **Warm Orange Glass (暖陽橘)**: 活力的深橘色調。
+  - 🌌 **Slate Cyber Glass (極客藍)**: 科技感的藍紫色調。
+  - 🥛 **Beige Sand Glass (燕麥米色)**: 簡約柔和的淺米色調。
+- **🖱️ 鼠標光暈追蹤**: 卡片背景會隨著滑鼠游標移動產生對應的局部光暈反射效果。
+- **⏳ 今日時間流逝進度條**: 即時計算並以進度條與百分比 (精確至小數點後三位) 呈現當天已過去的時間比例。
+- **🌐 雙語系支援**: 支援英文 (EN) 與繁體中文 (繁中) 的文字與日期格式切換。
+- **⏰ 12H / 24H 制切換**: 可自由切換 12 小時制或 24 小時制顯示。
+- **🌍 時區自動偵測**: 自動讀取當前系統的時區偏移量 (UTC Offset) 及時區名稱。
+- **💬 隨機金句引擎**: 內置一組隨機重新整理的開發者名言金句。
 
-1. **方式 A (直接開啟)**: 在檔案瀏覽器中雙擊 `index.html` 即可在瀏覽器中直接開啟。
-2. **方式 B (建立本地伺服器)**: 使用 Python 快速建立本地 HTTP 伺服器：
+---
+
+## 🚀 如何在本地執行
+
+本專案為純前端網頁，無須任何建置或打包步驟：
+
+1. **直接開啟**: 在檔案瀏覽器中雙擊 `index.html` 即可在瀏覽器中開啟。
+2. **使用 HTTP 伺服器**: 使用 Python 於本地建立靜態伺服器：
    ```bash
    python -m http.server 8000
    ```
-   接著在瀏覽器中輸入 `http://localhost:8000` 即可開啟網頁。
+   接著在瀏覽器中輸入 `http://localhost:8000` 即可訪問。
 
 ---
 
@@ -40,15 +39,15 @@
 
 ```
 First-AI-Dev-Practice/
-├── index.html        # 主網頁架構、內嵌 CSS 樣式及 JavaScript 互動邏輯
-└── README.md         # 專案說明文件 (中文版)
+├── index.html        # 主網頁 (包含 HTML 架構、CSS 樣式與 JS 邏輯)
+└── README.md         # 專案說明文件
 ```
 
 ---
 
-## 🛠️ 技術棧
+## 🛠️ 技術使用
 
-- **網頁結構**: 語意化 HTML5 標記 (Semantic HTML5)
-- **視覺樣式**: 現代 CSS3、自定義 CSS 變數 (`:root`)、彈性盒版面 (Flexbox Layout)、背景濾鏡模糊效果 (Backdrop-filter Glassmorphism)
-- **邏輯互動**: Vanilla ES6 JavaScript (DOM 元素操作、Date 時間 API、定時器渲染、滑鼠事件追蹤)
-- **字型排版**: Google Fonts (Outfit, Plus Jakarta Sans, Share Tech Mono)
+- **結構**: HTML5 語意化標記
+- **樣式**: CSS3 (使用自定義 CSS 變數、Flexbox 佈局與 Backdrop-filter 毛玻璃效果)
+- **邏輯**: 原生 ES6 JavaScript (DOM 操作、Date 時間 API、定時器與滑鼠事件監聽)
+- **字型**: Google Fonts (Outfit, Plus Jakarta Sans, Share Tech Mono)

@@ -545,8 +545,7 @@
 
             <!-- Card Footer -->
             <div class="footer-tag">
-                <span id="footer-copy">© 2026 Yichi Nien. Built for </span>
-                <a href="https://17s-portfolio.vercel.app/" target="_blank" id="footer-portfolio-link">Portfolio</a>
+                <span id="footer-copy">© 2026 Yichi Nien.</span>
             </div>
         </div>
     </div>
@@ -578,7 +577,6 @@
         const quoteBtn = document.getElementById('quote-btn');
         const themeLabel = document.getElementById('theme-lbl');
         const footerCopy = document.getElementById('footer-copy');
-        const footerPortfolioLink = document.getElementById('footer-portfolio-link');
 
         // State Variables
         let currentLanguage = 'zh'; // Default to Chinese
@@ -594,8 +592,7 @@
                 timezone: "Timezone: ",
                 progress: "Day Progress",
                 theme: "THEME:",
-                footer: "© 2026 Yichi Nien. Built for ",
-                portfolio: "Portfolio",
+                footer: "© 2026 Yichi Nien.",
                 greetings: {
                     morning: "I'm Yichi, Good Morning!",
                     afternoon: "I'm Yichi, Good Afternoon!",
@@ -619,8 +616,7 @@
                 timezone: "目前時區: ",
                 progress: "今日時間流逝度",
                 theme: "面板主題:",
-                footer: "© 2026 逸棋 (Yichi). 為個人 ",
-                portfolio: "開發作品集",
+                footer: "© 2026 逸棋 (Yichi).",
                 greetings: {
                     morning: "我是逸棋 (Yichi)，早安！",
                     afternoon: "我是逸棋 (Yichi)，午安！",
@@ -716,7 +712,6 @@
             progressLabel.textContent = dict.progress;
             themeLabel.textContent = dict.theme;
             footerCopy.innerHTML = dict.footer;
-            footerPortfolioLink.textContent = dict.portfolio;
         }
 
         // Live Clock, Calendar & Day Progress Logic
